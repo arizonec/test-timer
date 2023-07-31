@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { formatTime } from '../../utils/formatTime.js';
+import './Timer.scss';
 
 export function Timer () {
     const [time, setTime] = useState(0);
@@ -30,8 +31,8 @@ export function Timer () {
     }
 
     return (
-        <h2>
-            <input placeholder='Seconds' type='text' onChange={inputChange} ref={inputRef}/>
+        <div>
+            <input className='input' placeholder='Seconds' type='text' onChange={inputChange} ref={inputRef}/>
             <button type='submit' className='btn' onClick={() => {
                 setStart(true);
                 inputRef.current.value = '';
@@ -40,7 +41,9 @@ export function Timer () {
             </button>
             <br/>
             <br/>
-            {(start) ? formatTime(time) : 'hh:mm:ss'}
-        </h2>
+            <label className='timer'>
+                {(start) ? formatTime(time) : 'hh:mm:ss'}
+            </label>
+        </div>
     )
 }
