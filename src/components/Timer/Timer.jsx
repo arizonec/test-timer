@@ -1,33 +1,46 @@
-import { useEffect, useRef, useState } from 'react'
-import { FormatTimer } from '../FormatTimer';
-import '../Timer/Timer.scss'
-
+import { useEffect, useState, useRef } from 'react';
+import { formatTime } from '../../utils/formatTime.js';
 
 export function Timer () {
     const [time, setTime] = useState(0);
-    const [run, setRun] = useState(true);
+    const [start, setStart] = useState(false);
+    const timerId = useRef();
+    const inputRef = useRef(null);
 
-    const timer = useRef();
+    
 
     useEffect(() => {
-        if(run) {
-            timer.current = setInterval(() => {
-                setTime(prevNum => prevNum + 1);
-            }, 1000);
+        if(start) {
+            timerId.current = setInterval(() => {
+                setTime(prev => prev - 1)
+            }, 1000)
         }
-        return () => clearInterval(timer.current)
-    }, [run]);
+
+        if (time <= 0) {
+            clearInterval(timerId.current)
+        }
+
+        return () => clearInterval(timerId.current)
+    }, [start, time])
+
+
+    function inputChange(e) {
+        setTime(e.target.value)
+        setStart(false);
+    }
 
     return (
-        <div className='stopwatch'>
-            <FormatTimer time={time}/>
-            <div className='buttons'>
-                <button onClick={() => setTime(0)}>Restart</button>
-                <button onClick={() => {
-                    if (run) clearInterval(timer.current);
-                    setRun(!run);
-                }}>{run ? 'Stop' : 'Play'}</button>
-            </div>
-        </div>
-    );
+        <h2>
+            <input placeholder='Seconds' type='text' onChange={inputChange} ref={inputRef}/>
+            <button type='submit' className='btn' onClick={() => {
+                setStart(true);
+                inputRef.current.value = '';
+            }}>
+                Start
+            </button>
+            <br/>
+            <br/>
+            {(start) ? formatTime(time) : 'hh:mm:ss'}
+        </h2>
+    )
 }
